@@ -1,0 +1,9 @@
+pyyaml
+stomp.py
+dbutils
+pymysql
+requests
+PyQt5 
+openpyxl
+pymssql
+pywin32

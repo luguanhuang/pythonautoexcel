@@ -1,0 +1,161 @@
+2024-08-08 07:56:52  INFO     sql=
+            WITH MainComponentInfo AS (
+        SELECT
+            TPADAA.DAA002 AS 班组,
+            SGMRAA.RAA015 AS 主件品号,
+            TPADEA.DEA002 AS 主件品名,
+            TPADEA.DEA057 AS 主件规格,
+            SGMRAA.RAA961 AS 模具尺寸,
+            SGMRAA.RAA021 AS 单头备注,
+            SGMRAA.RAA980 AS 模具数量,
+            SGMRAA.RAA981 AS 生产次数,
+            SGMRAA.RAA018 AS 生产数量,
+            SGMRAB.RAB981 AS "单次用量(kg)",
+            SGMRAB.RAB007 AS "合计用量(kg)",
+            SGMRAB.RAB003 AS 子件品号,
+            SGMRAB.RAB004 AS 子件品名,
+            SGMRAB.RAB981*1000 AS "配料区(kg)",
+            SGMRAA.RAA006 AS 日期,
+            SGMRAA.RAA001 AS 工单单号,
+            ROW_NUMBER() OVER (PARTITION BY SGMRAA.RAA001 ORDER BY SGMRAB.RAB002 ASC) AS 子件序号, -- 按 RAB002 升序排序
+            CASE WHEN SGMRAA.RAA981 = 0 THEN NULL ELSE (SGMRAB.RAB007 / SGMRAA.RAA981) END AS 单次用量
+        FROM SGMRAA
+        LEFT JOIN TPADEA ON TPADEA.DEA001 = SGMRAA.RAA015
+        LEFT JOIN TPADAA ON TPADAA.DAA001 = SGMRAA.RAA005
+        LEFT JOIN SGMRAB ON SGMRAA.RAA001 = SGMRAB.RAB001
+        WHERE SGMRAA.RAA024 = 'T' and SGMRAA.RAA020='N'
+    ),
+    PivotedComponentInfo AS (
+        SELECT
+            MCI.班组,
+            MCI.主件品号,
+            MCI.主件品名,
+            MCI.主件规格,
+            MCI.模具尺寸,
+            MCI.单头备注,
+            MCI.模具数量,
+            MCI.生产次数,
+            MCI.生产数量,
+            SUM(MCI.单次用量) AS "单次用量总和",
+            SUM(MCI."合计用量(kg)") AS "合计用量总和",
+            MCI.日期,
+            MCI.工单单号,
+            STUFF((SELECT ',' + 子件品号
+                FROM MainComponentInfo MCI2
+                WHERE MCI2.工单单号 = MCI.工单单号 AND MCI2.日期 = MCI.日期
+                FOR XML PATH('')), 1, 1, '') AS 材料组合1,
+            MAX(CASE WHEN MCI.子件序号 = 1 THEN MCI.子件品号 ELSE NULL END) AS 子件品号1,
+            MAX(CASE WHEN MCI.子件序号 = 2 THEN MCI.子件品号 ELSE NULL END) AS 子件品号2,
+            MAX(CASE WHEN MCI.子件序号 = 3 THEN MCI.子件品号 ELSE NULL END) AS 子件品号3,
+            MAX(CASE WHEN MCI.子件序号 = 4 THEN MCI.子件品号 ELSE NULL END) AS 子件品号4,
+            MAX(CASE WHEN MCI.子件序号 = 5 THEN MCI.子件品号 ELSE NULL END) AS 子件品号5,
+            MAX(CASE WHEN MCI.子件序号 = 6 THEN MCI.子件品号 ELSE NULL END) AS 子件品号6,
+            MAX(CASE WHEN MCI.子件序号 = 7 THEN MCI.子件品号 ELSE NULL END) AS 子件品号7,
+            MAX(CASE WHEN MCI.子件序号 = 1 THEN MCI.子件品名 ELSE NULL END) AS 子件品名1,
+            MAX(CASE WHEN MCI.子件序号 = 2 THEN MCI.子件品名 ELSE NULL END) AS 子件品名2,
+            MAX(CASE WHEN MCI.子件序号 = 3 THEN MCI.子件品名 ELSE NULL END) AS 子件品名3,
+            MAX(CASE WHEN MCI.子件序号 = 4 THEN MCI.子件品名 ELSE NULL END) AS 子件品名4,
+            MAX(CASE WHEN MCI.子件序号 = 5 THEN MCI.子件品名 ELSE NULL END) AS 子件品名5,
+            MAX(CASE WHEN MCI.子件序号 = 6 THEN MCI.子件品名 ELSE NULL END) AS 子件品名6,
+            MAX(CASE WHEN MCI.子件序号 = 7 THEN MCI.子件品名 ELSE NULL END) AS 子件品名7,
+            MAX(CASE WHEN MCI.子件序号 = 1 THEN MCI.单次用量 ELSE NULL END) AS 单次用量1,
+            MAX(CASE WHEN MCI.子件序号 = 2 THEN MCI.单次用量 ELSE NULL END) AS 单次用量2,
+            MAX(CASE WHEN MCI.子件序号 = 3 THEN MCI.单次用量 ELSE NULL END) AS 单次用量3,
+            MAX(CASE WHEN MCI.子件序号 = 4 THEN MCI.单次用量 ELSE NULL END) AS 单次用量4,
+            MAX(CASE WHEN MCI.子件序号 = 5 THEN MCI.单次用量 ELSE NULL END) AS 单次用量5,
+            MAX(CASE WHEN MCI.子件序号 = 6 THEN MCI.单次用量 ELSE NULL END) AS 单次用量6,
+            MAX(CASE WHEN MCI.子件序号 = 7 THEN MCI.单次用量 ELSE NULL END) AS 单次用量7
+            
+        FROM MainComponentInfo MCI
+        WHERE MCI.班组 LIKE '%浇注乙班%'  AND MCI.日期='20240801'
+        GROUP BY
+            MCI.班组,
+            MCI.主件品号,
+            MCI.主件品名,
+            MCI.主件规格,
+            MCI.模具尺寸,
+            MCI.单头备注,
+            MCI.模具数量,
+            MCI.生产次数,
+            MCI.生产数量,
+            MCI.日期,
+            MCI.工单单号
+    )
+
+    SELECT
+        主件品号,
+        主件品名,
+        主件规格,
+        模具尺寸,
+        单头备注,
+        模具数量,
+        生产数量,
+        生产次数,
+        "单次用量总和",
+        "合计用量总和",
+        子件品号1,
+        子件品号2,
+        子件品号3,
+        子件品号4,
+        子件品号5,
+        子件品号6,
+        子件品号7,
+        子件品名1,
+        子件品名2,
+        子件品名3,
+        子件品名4,
+        子件品名5,
+        子件品名6,
+        子件品名7,
+        单次用量1,
+        单次用量2,
+        单次用量3,
+        单次用量4,
+        单次用量5,
+        单次用量6,
+        单次用量7,
+        材料组合1,
+        日期
+    FROM PivotedComponentInfo;
+        
+2024-08-08 07:56:53  INFO     len=40
+2024-08-08 07:56:53  INFO     mainname=旋盖轮/PU3 mainspec=φ31*φ20*12/本色/93-97 mainsize=φ31*φ20*12专-2（借用F090400004模具） mainnotes=附图纸，  date=20240801
+2024-08-08 07:56:53  INFO     mainname=前胶条/PU3 mainspec=13*136.5*840/黑色/93-97 mainsize=13*136.5*840/压-1 mainnotes=附图纸、无气泡无杂质、表面光  date=20240801
+2024-08-08 07:56:53  INFO     mainname=衬套/PU3/15079-FLB mainspec=φ68*φ21*29/深蓝色/77-83A mainsize=φ68*φ21*29专-10 mainnotes=附图，有2套是新模具  date=20240801
+2024-08-08 07:56:53  INFO     mainname=衬套/PU3/15079-RB_revF mainspec=φ75.5*φ38*67/深蓝色/77-83A mainsize=φ75.5*φ38*67压-5 mainnotes=附图  date=20240801
+2024-08-08 07:56:53  INFO     mainname=上斗体包胶/PU3 mainspec=10*491*489*109/红色/90-95 mainsize=10*491*489*109专-1 mainnotes=附图纸、新模具  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶辊/PU4 mainspec=φ140*φ91*625/本色/80-85 mainsize=φ150*φ91*635 简 mainnotes=法兰165  date=20240801
+2024-08-08 07:56:53  INFO     mainname=侧销器/PU3 mainspec=φ63±0.25*80/黑色/90-92 mainsize=φ64±0.25*86专 mainnotes=两半模不错位，注意光洁度气孔杂质  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶辊/PU4 mainspec=φ191*φ180*2100/大红色/48-55/碳纤维/抗静电 mainsize=φ200*φ180*2110简 mainnotes=客户退回返工件  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶辊/PU4 mainspec=φ60*φ25*829/铁红色/75-80 mainsize=φ70*φ25*839简 mainnotes=按图纸  date=20240801
+2024-08-08 07:56:53  INFO     mainname=止动环/PU1/开口 mainspec=φ130*φ70*67/本色/80-85 mainsize=φ130*φ70*67专-1 mainnotes=按图纸  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶辊/PU1 mainspec=φ59*φ49*138/本色/80-85 mainsize=φ70*φ49*148简 mainnotes=  date=20240801
+2024-08-08 07:56:53  INFO     mainname=弹簧管/PU3 mainspec=φ63*φ14*210/黑色/90-92 mainsize=φ64*φ14*215 mainnotes=注意长度，防止偏心，内外光洁无气孔。  date=20240801
+2024-08-08 07:56:53  INFO     mainname=板/PU3 mainspec=10*250*1500/本色/93-97A mainsize=11*250*1535 mainnotes=浇筑面平整光滑无气泡杂质，尺寸上公差  date=20240801
+2024-08-08 07:56:53  INFO     mainname=拨料杆/PU3 mainspec=20*34*175/本色/90-95 mainsize=20*34*175专-1 mainnotes=按图纸,新模具  date=20240801
+2024-08-08 07:56:53  INFO     mainname=转子座2/PU3 mainspec=φ325*φ270*425/90-95/中铬黄 mainsize=φ335*φ270*429专-1(和F080100294共用外模) mainnotes=按图纸  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶辊/PU4 mainspec=φ180*φ170*2050/大红色/55-60/碳纤维/抗静电 mainsize=φ190*φ170*2060简 mainnotes=硬度不低于55，提供样料1件  date=20240801
+2024-08-08 07:56:53  INFO     mainname=衬套/PU3/15079-FUB mainspec=φ68*φ21*31.4/深蓝色/77-83A mainsize=φ68*φ21*31.4专-10 mainnotes=附图  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶板/PU4 mainspec=10.5*45*260/本色/88-92 mainsize=胶15*45*260 mainnotes=附图  date=20240801
+2024-08-08 07:56:53  INFO     mainname=板条/PU3 mainspec=36*250*1041/本色/95-97 mainsize=36*250*1041 mainnotes=白班生产，第二天加工  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶轮/PU4 mainspec=φ60*φ35*10/翠绿色/40-45 mainsize=方70*φ35*10-专-10 mainnotes=附图  date=20240801
+2024-08-08 07:56:53  INFO     mainname=上斗体包胶/PU3 mainspec=10*300*500*109/红色/90-95 mainsize=10*300*500*109专-1 mainnotes=附图纸、新模具  date=20240801
+2024-08-08 07:56:53  INFO     mainname=棒销/PU3 mainspec=φ20*φ8*53/M12/90-95/中铬黄 mainsize=φ20.3*φ8*56专-5 mainnotes=附图  date=20240801
+2024-08-08 07:56:53  INFO     mainname=钢件包胶/PU3 mainspec=φ253*φ162*5/本色/92-95 mainsize=φ253*φ152*8简 mainnotes=硫化24小时，无杂质气泡脱胶现象  date=20240801
+2024-08-08 07:56:53  INFO     mainname=圆垫/PU1 mainspec=φ150*φ45*280/本色/75-85 mainsize=φ153*φ45.6*280-1 mainnotes=保证13条正品！  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶辊/PU1 mainspec=φ49*φ39*135/本色/80-85 mainsize=φ60*φ39*145简 mainnotes=两端轴涂干式防锈油  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶辊/PU4 mainspec=φ230*φ212*1790/黑色/70-75 mainsize=φ240*φ212*1800简 mainnotes=附图,白班生产，周一加工  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶轮/PU4/FRY002_S3_1040-2 mainspec=φ156*φ133.9*50/黑色/65-75A/使用上次可用的包尼龙的原料 mainsize=φ160*φ133.9*52专-12 mainnotes=附图  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶辊/PU4 mainspec=φ132*φ90*625/本色/80-85 mainsize=φ142*φ90*635简 mainnotes=法兰135-2件，法兰126-1件，钢件外径实测92-1件，97-2件  date=20240801
+2024-08-08 07:56:53  INFO     mainname=唇边-9785/PU3 mainspec=252*187*37.67/红色/60-65 mainsize=252*187*37.67压-1 mainnotes=附图纸、  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶辊/PU4 mainspec=φ100*φ85*300/大红色/60-65 mainsize=φ110*φ85*310 mainnotes=  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶轮/PU1-从动轮 mainspec=φ309.5*φ299*26/本色/87-92 mainsize=φ320*φ299*28简 mainnotes=附图纸  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶轮/PU3 mainspec=φ125*φ110*42/80-85/黑色 mainsize=φ132*φ110*44专-4 mainnotes=钢号:JP 14件，钢号:ZH 9件  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶轮/PU4/1073319B mainspec=φ200*φ169*100/65-75A/黑色 mainsize=φ205*φ169*102 mainnotes=附图  date=20240801
+2024-08-08 07:56:53  INFO     mainname=直筒/PU3 mainspec=φ24.8*φ13*750/本色/90-95 mainsize=φ25.2*φ13*775专 mainnotes=按图纸,新模具  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶辊/PU4 mainspec=φ120*φ88*640/本色/80-85 mainsize=φ130*φ88*650简 mainnotes=  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶轮/PU1 mainspec=φ309*φ299*26/本色/87-92 mainsize=φ320*φ299*28简 mainnotes=附图纸  date=20240801
+2024-08-08 07:56:53  INFO     mainname=隔圈包胶/PU4 mainspec=φ301*φ270*6/大红色/70-75 mainsize=φ305*φ270*9专-2 mainnotes=  date=20240801
+2024-08-08 07:56:53  INFO     mainname=直筒/PU4 mainspec=φ193*φ163*750/本色/55-60 mainsize=φ205*φ165.6*785简 mainnotes=新模具  date=20240801
+2024-08-08 07:56:53  INFO     mainname=包胶轮/PU4 mainspec=φ45*φ24*16/本色/85 mainsize=φ45*φ24*18压-16 mainnotes=有模具，外形光滑无杂质气泡尽量的少，不能出现气泡堆积的情况。  date=20240801
+2024-08-08 07:56:53  INFO     mainname=塞头/PU4 mainspec=φ164*φ101*50/本色/30-40 mainsize=φ167.3*φ102.6*50.9专-1 mainnotes=新模具  date=20240801

@@ -1,0 +1,156 @@
+IF OBJECT_ID('tempdb..#TempTable') IS NOT NULL
+    DROP TABLE #TempTable;
+
+WITH MainComponentInfo AS (
+    SELECT
+        TPADAA.DAA002 AS 班组,
+        SGMRAA.RAA015 AS 主件品号,
+        TPADEA.DEA002 AS 主件品名,
+        TPADEA.DEA057 AS 主件规格,
+        SGMRAA.RAA961 AS 模具尺寸,
+        SGMRAA.RAA021 AS 单头备注,
+        SGMRAA.RAA980 AS 模具数量,
+        SGMRAA.RAA981 AS 生产次数,
+        SGMRAA.RAA018 AS 生产数量,
+        SGMRAB.RAB007 / NULLIF(SGMRAA.RAA981, 0) AS "单次用量(kg)",
+        SGMRAB.RAB007 AS "合计用量(kg)",
+        SGMRAB.RAB003 AS 子件品号,
+        SGMRAB.RAB004 AS 子件品名,
+        (SGMRAB.RAB007 / NULLIF(SGMRAA.RAA981, 0)) * 1000 AS "配料区(g)",
+        SGMRAA.RAA006 AS 日期,
+        SGMRAA.RAA001 AS 工单单号,
+        ROW_NUMBER() OVER (PARTITION BY SGMRAA.RAA001 ORDER BY SGMRAB.RAB002 ASC) AS 子件序号,
+        CASE
+            WHEN SGMRAA.RAA981 = 0 THEN NULL
+            ELSE (SGMRAB.RAB007 / SGMRAA.RAA981) * 1000
+        END AS 单次用量
+    FROM SGMRAA
+    LEFT JOIN TPADEA ON TPADEA.DEA001 = SGMRAA.RAA015
+    LEFT JOIN TPADAA ON TPADAA.DAA001 = SGMRAA.RAA005
+    LEFT JOIN SGMRAB ON SGMRAA.RAA001 = SGMRAB.RAB001
+    WHERE SGMRAA.RAA024 = 'T' AND RAA020 = 'N'
+),
+FilteredComponentInfo AS (
+    SELECT
+        MCI.班组,
+        MCI.主件品号,
+        MCI.主件品名,
+        MCI.主件规格,
+        MCI.模具尺寸,
+        MCI.单头备注,
+        MCI.模具数量,
+        MCI.生产次数,
+        MCI.生产数量,
+        MCI."单次用量(kg)",
+        MCI."合计用量(kg)",
+        MCI.日期,
+        MCI.工单单号,
+        MCI.子件品号,
+        MCI.子件品名,
+        MCI."配料区(g)",
+        MCI.子件序号,
+        MCI.单次用量
+    FROM MainComponentInfo MCI
+    WHERE MCI.子件品号 NOT LIKE 'C03%'  -- 过滤掉C03例外
+),
+PivotedComponentInfo AS (
+    SELECT
+        MCI.班组,
+        MCI.主件品号,
+        MCI.主件品名,
+        MCI.主件规格,
+        MCI.模具尺寸,
+        MCI.单头备注,
+        MCI.模具数量,
+        MCI.生产次数,
+        MCI.生产数量,
+        SUM(MCI."单次用量(kg)") AS "单次用量总和",
+        SUM(MCI."合计用量(kg)") AS "合计用量总和",
+        MCI.日期,
+        MCI.工单单号,
+        STUFF((SELECT ',' + MCI2.子件品号
+               FROM FilteredComponentInfo MCI2
+               WHERE MCI2.工单单号 = MCI.工单单号 AND MCI2.日期 = MCI.日期
+               FOR XML PATH('')), 1, 1, '') AS 材料组合1,
+        MAX(CASE WHEN MCI.子件序号 = 1 THEN MCI.子件品号 ELSE NULL END) AS 子件品号1,
+        MAX(CASE WHEN MCI.子件序号 = 2 THEN MCI.子件品号 ELSE NULL END) AS 子件品号2,
+        MAX(CASE WHEN MCI.子件序号 = 3 THEN MCI.子件品号 ELSE NULL END) AS 子件品号3,
+        MAX(CASE WHEN MCI.子件序号 = 4 THEN MCI.子件品号 ELSE NULL END) AS 子件品号4,
+        MAX(CASE WHEN MCI.子件序号 = 5 THEN MCI.子件品号 ELSE NULL END) AS 子件品号5,
+        MAX(CASE WHEN MCI.子件序号 = 6 THEN MCI.子件品号 ELSE NULL END) AS 子件品号6,
+        MAX(CASE WHEN MCI.子件序号 = 7 THEN MCI.子件品号 ELSE NULL END) AS 子件品号7,
+        MAX(CASE WHEN MCI.子件序号 = 1 THEN MCI.子件品名 ELSE NULL END) AS 子件品名1,
+        MAX(CASE WHEN MCI.子件序号 = 2 THEN MCI.子件品名 ELSE NULL END) AS 子件品名2,
+        MAX(CASE WHEN MCI.子件序号 = 3 THEN MCI.子件品名 ELSE NULL END) AS 子件品名3,
+        MAX(CASE WHEN MCI.子件序号 = 4 THEN MCI.子件品名 ELSE NULL END) AS 子件品名4,
+        MAX(CASE WHEN MCI.子件序号 = 5 THEN MCI.子件品名 ELSE NULL END) AS 子件品名5,
+        MAX(CASE WHEN MCI.子件序号 = 6 THEN MCI.子件品名 ELSE NULL END) AS 子件品名6,
+        MAX(CASE WHEN MCI.子件序号 = 7 THEN MCI.子件品名 ELSE NULL END) AS 子件品名7,
+        MAX(CASE WHEN MCI.子件序号 = 1 THEN MCI.单次用量 ELSE NULL END) AS 单次用量1,
+        MAX(CASE WHEN MCI.子件序号 = 2 THEN MCI.单次用量 ELSE NULL END) AS 单次用量2,
+        MAX(CASE WHEN MCI.子件序号 = 3 THEN MCI.单次用量 ELSE NULL END) AS 单次用量3,
+        MAX(CASE WHEN MCI.子件序号 = 4 THEN MCI.单次用量 ELSE NULL END) AS 单次用量4,
+        MAX(CASE WHEN MCI.子件序号 = 5 THEN MCI.单次用量 ELSE NULL END) AS 单次用量5,
+        MAX(CASE WHEN MCI.子件序号 = 6 THEN MCI.单次用量 ELSE NULL END) AS 单次用量6,
+        MAX(CASE WHEN MCI.子件序号 = 7 THEN MCI.单次用量 ELSE NULL END) AS 单次用量7
+    FROM FilteredComponentInfo MCI
+WHERE MCI.日期='20240910' AND (MCI.班组='浇注甲班' OR MCI.班组='甲班返工')
+    GROUP BY
+        MCI.班组,
+        MCI.主件品号,
+        MCI.主件品名,
+        MCI.主件规格,
+        MCI.模具尺寸,
+        MCI.单头备注,
+        MCI.模具数量,
+        MCI.生产次数,
+        MCI.生产数量,
+        MCI.日期,
+        MCI.工单单号
+)
+SELECT
+    DENSE_RANK() OVER(ORDER BY 材料组合1) AS 序号,  -- 添加序号列
+    班组,
+    主件品号,
+    主件品名,
+    主件规格,
+    模具尺寸,
+    单头备注,
+    模具数量,
+    生产次数,
+    生产数量,
+    "单次用量总和",
+    "合计用量总和",
+    日期,
+    工单单号,
+    材料组合1,  -- 确保材料组合1列包含在最终输出中
+    子件品号1,
+    子件品号2,
+    子件品号3,
+    子件品号4,
+    子件品号5,
+    子件品号6,
+    子件品号7,
+    子件品名1,
+    子件品名2,
+    子件品名3,
+    子件品名4,
+    子件品名5,
+    子件品名6,
+    子件品名7,
+    单次用量1,
+    单次用量2,
+    单次用量3,
+    单次用量4,
+    单次用量5,
+    单次用量6,
+    单次用量7
+INTO #TempTable
+FROM PivotedComponentInfo;
+
+-- 最终查询显示临时表中的数据
+SELECT *
+FROM #TempTable;
+
+IF OBJECT_ID('tempdb..#TempTable') IS NOT NULL
+    DROP TABLE #TempTable;

@@ -1,0 +1,245 @@
+
+<script src="//g.alicdn.com/frontend-lib/frontend-lib/2.3.59/antidom_240527.js"></script><script src="//g.alicdn.com/frontend-lib/frontend-lib/2.3.59/interfaceacting240527.js"></script><script src="/js/config.js?CavhUvhMnc6VtjoJX5S5"></script><script>window.__self_view__ = 'odds_in';</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<meta http-equiv="Content-Language" content="zh-HK" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<meta name="title" content="澳門彩票有限公司 Macauslot -- 亞洲首創合法足球籃球NBA博彩" />
+<meta name="Description" content="本公司為亞洲首間合法之足球及籃球博彩彩票專營公司，業務主要是為本地及海外客戶提供足球、籃球及網球博彩服務。" />
+<meta name="keywords" content="澳門官網，足球籃球博彩，澳門博彩，體育彩票，現場比數，完場比數，心水推介，即時賠率，賽果，網球賽程，足球賽程，籃球賽程，賽程，即時比數，比數直播、賽事直播、賽事資訊，賽事動態" />
+
+
+<meta name="thumbnail" content="" />
+<meta name="author" content="澳門彩票有限公司" />
+<meta name="copyright" content="&copy; 澳門彩票有限公司 All Rights Reserved." />
+<!-- Favicon -->
+<!--[if IE]><link rel="shortcut icon" type="image/x-icon" href="" /><![endif]-->
+<link rel="icon" type="image/x-icon" href="/img/favicon.ico?_=2023121401"/>
+
+
+<title>澳門彩票有限公司 Macauslot -- 亞洲首創合法足球籃球NBA博彩</title>
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+<style type="text/css"></style>
+<style>
+    #loading_full_size {
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-color: #fff;
+        background-position: center center;
+        left: 0;
+        top: 0;
+        z-index: -1;
+        opacity: 0;
+        transition: all ease .6s;
+        position: fixed;
+    }
+
+    #loading_full_size.active {
+        z-index: 9999;
+        opacity: 1;
+        transition: all ease .6s;
+    }
+</style>
+
+<link href="/css/common.css?49dacdebdc9886a4c85e" rel="stylesheet"><link href="/css/odds_in.css?49dacdebdc9886a4c85e" rel="stylesheet"><link href="/css/cmsCommon.css" rel="stylesheet"></head>
+<body id="mainContainer" class="imgBg info_sc content_sport_fb">
+    <div class="body_inner">
+        <div class="body_header clearfix">
+    <div class="big-game-nav">
+        <span class="header-count-down"></span>
+    </div>
+    <div class="left">
+        <div class="logo">
+            <a href="/sc/index.html"></a>
+        </div>
+        <ul class="nav clear" class="clearfix">
+            <li class="home">
+                <a href="/sc/index.html">网站主页</a>
+            </li>
+            <li class="FB active">
+                <a href="/sc/soccer/index.html">足球</a>
+            </li>
+            <li class="BB">
+                <a href="/sc/basketball/index.html">篮球</a>
+            </li>
+        </ul>
+    </div>
+    <div class="right">
+        <ul class="clearfix">
+            <li><a class="betting-time">投注及客服办公时间</a></li>
+            <li class="whatsNews">最新消息<span class="whatsNewTag"></span></li>
+            
+            <li class="tips" data-sport="soccer">
+                <a><span></span>心水推介</a>
+            </li>
+            
+            <li class="download"><a>盘纸下载</a></li>
+            <li>GMT + 8 <span class="time"></span></li>
+            <li class="lang home-lang-box">
+                <span class="lang-icon"></span>
+                <div class="btn">
+                    <a href="#">繁體中文</a>
+                    <ul>
+                        <li class="lang_cn" data-type="cn">繁體中文</li>
+                        <li class="lang_sc" data-type="sc">简体中文</li>
+                        <li class="lang_en" data-type="en">English</li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+        <a href="#" target="_blank" class="banner clearfix"></a>
+    </div>
+</div>
+
+        <div class="main full_size_main">
+            <div class="main-left">
+                <div class="sidebar">
+    <ul class="sidebar-list" data-currenttype="ODDS">
+        
+        <li data-sport="soccer" data-type="ODDS"
+            class="icon_zq icon_pl active">
+            
+            <a href="/sc/soccer/odds_in.html"><span
+                    class="icon"></span>赔率</a>
+            
+        </li>
+        
+        <li data-sport="soccer" data-type="FIXTURE"
+            class="icon_zq icon_sc ">
+            
+            <a href="/sc/soccer/fixture.html"><span
+                    class="icon"></span>赛程</a>
+            
+        </li>
+        
+        <li data-sport="soccer" data-type="LIVESCORE"
+            class="icon_zq icon_bs ">
+            
+            <a href="/sc/soccer/livescore.html"><span
+                    class="icon"></span>比数</a>
+            
+        </li>
+        
+        <li data-sport="soccer" data-type="NEWS"
+            class="icon_zq icon_xw ">
+            
+            <a href="/sc/soccer/newsList.html"><span
+                    class="icon"></span>新闻</a>
+            
+        </li>
+        
+        <li data-sport="soccer" data-type="ANALYSIS"
+            class="icon_zq icon_fx ">
+            
+            <a href="/sc/soccer/analysis.html"><span
+                    class="icon"></span>分析</a>
+            
+        </li>
+        
+        <li data-sport="soccer" data-type="STATISTIC"
+            class="icon_zq icon_zlk ">
+            
+            <a class="popup-view" data-type="database" data-url="/fjt/soccer/html/database/current/ch-tournament.html"
+                data-height="600" data-width="1000"><span
+                    class="icon"></span>资料库</a>
+            
+        </li>
+        
+    </ul>
+</div>
+            </div>
+            <div class="main-right">
+                
+    <div id="main_container">
+    <iframe src="" frameborder="0"></iframe>
+</div>
+
+
+            </div>
+        </div>
+        <div class="body_footer">
+    <div class="btn body_footer_btn">
+        <h1>
+            回到页顶
+        </h1>
+        <i></i>
+    </div>
+    <div class="bottom">
+        <ul class="left">
+            <li><a class="footer-company-info" href="javascript:;">公司资讯</a></li>
+            <li><a class="footer-company-statement" href="javascript:;">公司声明</a></li>
+            <li class="br"><a class="footer-privacy-policy" href="javascript:;">私隐政策</a></li>
+            <li><a class="footer-contact-us" href="javascript:;">联络我们</a></li>
+            <li><a class="footer-fqa" href="javascript:;">常见问题</a></li>
+            <li><a class="feedback" href="javascript:;">反映意见</a></li>
+            <li class="br"><a class="go_employment" href="javascript:openPopup('https://www.macauslot.com/hr/hr_top_m1.php', 1100, 600);">招聘人才</a></li>
+            <li><a class="footer-responsible-gambling" href="javascript:;">负责任博彩</a></li>
+        </ul>
+        <div class="right">
+            <div class="logo">
+            </div>
+            <div class="info">
+                <p>版权所有©2024澳门彩票有限公司</p>
+                <i class="r18" data-alert="澳彩概不接受未满18岁人仕博彩。&#60;br/&#62;澳彩为本地提供球类博彩服务之合法机构，参与境内非法赌博属严重罪行，切勿以身试法，如有发现，请致电司法警察局博彩罪案举报专线:2833 0099。&#60;br/&#62;澳彩提倡健康博彩娱乐，若遇有情绪问题及异常行为，可致电逸安社 2821 0033 求助。"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div id="loading_full_size" class="active">
+</div>
+
+    </div>
+    <div class="eighteen-sticky">
+    <div class="close-icon"></div>
+    <div class="eighteen-icon"></div>
+</div>
+
+<!--    <div class="landscape-tip-content">
+    <span class="icon"></span>
+    <p>为确保功能正常，且让您有最好的使用体验，</p>
+    <p>请将您的萤幕旋转为直向，谢谢！</p>
+</div>
+-->
+    <script src="https://g.alicdn.com/AWSC/AWSC/awsc.js"></script>
+<script type="text/javascript" src="/js/common.js?49dacdebdc9886a4c85e"></script><script type="text/javascript" src="/js/sc_soccer.js?49dacdebdc9886a4c85e"></script><script type="text/javascript" src="/js/odds_in.js?49dacdebdc9886a4c85e"></script></body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
